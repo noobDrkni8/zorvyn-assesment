@@ -17,11 +17,13 @@ exports.createUser = async (req, res) => {
         const lastUser = await User.findOne().sort("-id");
         const nextId = lastUser ? lastUser.id + 1 : 1;
 
+        const formattedRole = role ? role.charAt(0).toUpperCase() + role.slice(1).toLowerCase() : "Viewer";
+
         const user = new User({
             id: nextId,
             name,
             email,
-            role,
+            role: formattedRole,
             status: status || "active"
         });
 
@@ -51,9 +53,11 @@ exports.updateUser = async (req, res) => {
         const { id } = req.params;
         const { name, email, role, status } = req.body;
 
+        const formattedRole = role ? role.charAt(0).toUpperCase() + role.slice(1).toLowerCase() : "Viewer";
+
         const updatedUser = await User.findOneAndUpdate(
             { id: parseInt(id) },
-            { $set: { name, email, role, status } },
+            { $set: { name, email, role: formattedRole, status } },
             { new: true, runValidators: true }
         );
 

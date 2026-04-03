@@ -42,7 +42,7 @@ public class FinanceViewModel extends ViewModel {
         return repository.updateUser(userId, targetId, user);
     }
 
-    public LiveData<ApiResponse<User>> searchUser(String userId, String name) {
-        return repository.searchUser(userId, name);
+    public LiveData<ApiResponse<User>> searchUser(String userId, String name, String email) {
+        return repository.searchUser(userId, name, email);
     }
 }

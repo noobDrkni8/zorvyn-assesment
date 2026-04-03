@@ -65,7 +65,7 @@ public class ClientAdminActivity extends AppCompatActivity {
             if (response != null && response.getData() != null) {
                 layoutList.removeAllViews();
                 for (User u : response.getData()) {
-                    if ("viewer".equals(u.getRole().toLowerCase())) {
+                    if ("viewer".equalsIgnoreCase(u.getRole())) {
                         displayUserCard(u);
                     }
                 }
@@ -82,13 +82,21 @@ public class ClientAdminActivity extends AppCompatActivity {
             return;
         }
 
+        String name = null;
+        String email = null;
+        if (searchTerm.contains("@")) {
+            email = searchTerm;
+        } else {
+            name = searchTerm;
+        }
+
         progressBar.setVisibility(View.VISIBLE);
-        viewModel.searchUser(currentUserId, searchTerm).observe(this, response -> {
+        viewModel.searchUser(currentUserId, name, email).observe(this, response -> {
             progressBar.setVisibility(View.GONE);
             layoutList.removeAllViews();
             if (response != null && response.getData() != null) {
                 User u = response.getData();
-                if ("viewer".equals(u.getRole().toLowerCase())) {
+                if ("viewer".equalsIgnoreCase(u.getRole())) {
                     displayUserCard(u);
                 } else {
                     Toast.makeText(this, "No client found with that name/email", Toast.LENGTH_SHORT).show();
@@ -100,7 +108,7 @@ public class ClientAdminActivity extends AppCompatActivity {
     }
 
     private void displayUserCard(User u) {
-        View card = getLayoutInflater().inflate(R.layout.item_user, null);
+        View card = getLayoutInflater().inflate(R.layout.item_user, layoutList, false);
         TextView tvInitial = card.findViewById(R.id.tv_user_initial);
         TextView tvName = card.findViewById(R.id.tv_item_user_name);
         TextView tvEmail = card.findViewById(R.id.tv_item_user_email);

@@ -135,6 +135,25 @@ exports.getSummary = async (req, res) => {
 
         const recentActivity = await Record.find(matchFilter).sort("-date").limit(5);
 
+        const monthlyTrends = await Record.aggregate([
+            { $match: matchFilter },
+            { 
+                $group: { 
+                    _id: { month: { $substr: ["$date", 0, 7] }, type: "$type" }, 
+                    total: { $sum: "$amount" } 
+                } 
+            },
+            { 
+                $project: { 
+                    _id: 0, 
+                    month: "$_id.month", 
+                    type: "$_id.type", 
+                    total: 1 
+                } 
+            },
+            { $sort: { month: 1 } }
+        ]);
+
         const totalIncome = stats.length > 0 ? stats[0].totalIncome : 0;
         const totalExpense = stats.length > 0 ? stats[0].totalExpense : 0;
 
@@ -143,7 +162,8 @@ exports.getSummary = async (req, res) => {
             totalExpense,
             netBalance: totalIncome - totalExpense,
             categoryWise: categoryWise || [],
-            recentActivity: recentActivity || []
+            recentActivity: recentActivity || [],
+            monthlyTrends: monthlyTrends || []
         });
     } catch (error) {
         respond(res, 500, false, "Server Error: " + error.message);

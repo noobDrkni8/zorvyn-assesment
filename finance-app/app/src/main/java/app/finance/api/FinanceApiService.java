@@ -59,6 +59,7 @@ public interface FinanceApiService {
     @GET("search")
     Call<ApiResponse<User>> searchUser(
             @Header("X-User-Id") String userId,
-            @Query("name") String name
+            @Query("name") String name,
+            @Query("email") String email
     );
 }

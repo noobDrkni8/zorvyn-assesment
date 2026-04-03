@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -20,7 +20,7 @@ public class InsightsActivity extends AppCompatActivity {
 
     private String currentUserId, currentUserRole;
     private EditText etSearch;
-    private FrameLayout containerResult;
+    private LinearLayout containerResult;
     private ProgressBar progressBar;
     private TextView labelResult;
     private FinanceViewModel viewModel;
@@ -52,12 +52,21 @@ public class InsightsActivity extends AppCompatActivity {
     private void performSearch() {
         String query = etSearch.getText().toString().trim();
         if (query.isEmpty()) {
-            Toast.makeText(this, "Please enter a name or email", Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, "Please enter an email or name", Toast.LENGTH_SHORT).show();
             return;
         }
 
+        String name = null;
+        String email = null;
+
+        if (query.contains("@")) {
+            email = query;
+        } else {
+            name = query;
+        }
+
         progressBar.setVisibility(View.VISIBLE);
-        viewModel.searchUser(currentUserId, query).observe(this, response -> {
+        viewModel.searchUser(currentUserId, name, email).observe(this, response -> {
             progressBar.setVisibility(View.GONE);
             containerResult.removeAllViews();
             if (response != null && response.getData() != null) {
@@ -71,7 +80,7 @@ public class InsightsActivity extends AppCompatActivity {
     }
 
     private void displayUserCard(User u) {
-        View card = getLayoutInflater().inflate(R.layout.item_user, null);
+        View card = getLayoutInflater().inflate(R.layout.item_user, containerResult, false);
         TextView tvInitial = card.findViewById(R.id.tv_user_initial);
         TextView tvName = card.findViewById(R.id.tv_item_user_name);
         TextView tvEmail = card.findViewById(R.id.tv_item_user_email);

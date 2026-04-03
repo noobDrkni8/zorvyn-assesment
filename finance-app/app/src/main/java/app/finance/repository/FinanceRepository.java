@@ -143,9 +143,9 @@ public class FinanceRepository {
         return data;
     }
 
-    public LiveData<ApiResponse<User>> searchUser(String userId, String name) {
+    public LiveData<ApiResponse<User>> searchUser(String userId, String name, String email) {
         MutableLiveData<ApiResponse<User>> data = new MutableLiveData<>();
-        apiService.searchUser(userId, name).enqueue(new Callback<ApiResponse<User>>() {
+        apiService.searchUser(userId, name, email).enqueue(new Callback<ApiResponse<User>>() {
             @Override
             public void onResponse(Call<ApiResponse<User>> call, Response<ApiResponse<User>> response) {
                 if (response.isSuccessful()) {
