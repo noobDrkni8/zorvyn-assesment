@@ -154,6 +154,26 @@ exports.getSummary = async (req, res) => {
             { $sort: { month: 1 } }
         ]);
 
+        const weeklyTrends = await Record.aggregate([
+            { $match: matchFilter },
+            { 
+                $group: { 
+                    _id: { week: { $substr: ["$date", 0, 10] }, type: "$type" }, 
+                    total: { $sum: "$amount" } 
+                } 
+            },
+            { 
+                $project: { 
+                    _id: 0, 
+                    week: "$_id.week", 
+                    type: "$_id.type", 
+                    total: 1 
+                } 
+            },
+            { $sort: { week: -1 } },
+            { $limit: 10 }
+        ]);
+
         const totalIncome = stats.length > 0 ? stats[0].totalIncome : 0;
         const totalExpense = stats.length > 0 ? stats[0].totalExpense : 0;
 
@@ -163,7 +183,8 @@ exports.getSummary = async (req, res) => {
             netBalance: totalIncome - totalExpense,
             categoryWise: categoryWise || [],
             recentActivity: recentActivity || [],
-            monthlyTrends: monthlyTrends || []
+            monthlyTrends: monthlyTrends || [],
+            weeklyTrends: weeklyTrends || []
         });
     } catch (error) {
         respond(res, 500, false, "Server Error: " + error.message);

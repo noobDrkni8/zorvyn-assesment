@@ -205,4 +205,24 @@ public class FinanceRepository {
         });
         return data;
     }
+
+    public LiveData<ApiResponse<Record>> updateRecord(String userId, int recordId, Record record) {
+        MutableLiveData<ApiResponse<Record>> data = new MutableLiveData<>();
+        apiService.updateRecord(userId, recordId, record).enqueue(new Callback<ApiResponse<Record>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Record>> call, Response<ApiResponse<Record>> response) {
+                if (response.isSuccessful()) {
+                    data.setValue(response.body());
+                } else {
+                    data.setValue(new ApiResponse<>(false, "Update failed: " + response.code(), null));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Record>> call, Throwable t) {
+                data.setValue(new ApiResponse<>(false, "Network failure: " + t.getMessage(), null));
+            }
+        });
+        return data;
+    }
 }

@@ -27,6 +27,12 @@
             android:name=".MainActivity"
             android:exported="true" />
         <activity
+            android:name=".SummaryActivity"
+            android:exported="false" />
+        <activity
+            android:name=".ManagementActivity"
+            android:exported="false" />
+        <activity
             android:name=".InspectionActivity"
             android:exported="false" />
         <activity

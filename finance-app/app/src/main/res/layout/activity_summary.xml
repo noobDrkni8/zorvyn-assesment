@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#121212">
+
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar">
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar_summary"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            app:title="Financial Overview" />
+    </com.google.android.material.appbar.AppBarLayout>
+
+    <androidx.core.widget.NestedScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp">
+
+            <!-- User Header -->
+            <TextView
+                android:id="@+id/tv_summary_user_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="User Name"
+                android:textColor="#FFFFFF"
+                android:textSize="24sp"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/tv_summary_user_email"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="user@zorvyn.com"
+                android:textColor="#88FFFFFF"
+                android:textSize="14sp"
+                android:layout_marginBottom="24dp" />
+
+            <!-- Net Balance Highlight -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="8dp"
+                android:layout_marginBottom="20dp"
+                app:cardBackgroundColor="#1E1E1E">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="24dp"
+                    android:gravity="center">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Current Liquidity"
+                        android:textColor="#88FFFFFF"
+                        android:textSize="12sp"
+                        android:textStyle="bold"
+                        android:textAllCaps="true" />
+                    <TextView
+                        android:id="@+id/tv_summary_balance"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="$0.00"
+                        android:textColor="#BB86FC"
+                        android:textSize="36sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Income / Expense Split -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:weightSum="2"
+                android:layout_marginBottom="24dp">
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="12dp"
+                    android:layout_marginEnd="8dp"
+                    app:cardBackgroundColor="#1E1E1E">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Income" android:textColor="#03DAC5" android:textSize="12sp" />
+                        <TextView android:id="@+id/tv_summary_total_income" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+$0" android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    app:cardCornerRadius="12dp"
+                    android:layout_marginStart="8dp"
+                    app:cardBackgroundColor="#1E1E1E">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Expenses" android:textColor="#CF6679" android:textSize="12sp" />
+                        <TextView android:id="@+id/tv_summary_total_expense" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="-$0" android:textColor="#FFFFFF" android:textSize="18sp" android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_summary_goto_management"
+                android:layout_width="match_parent"
+                android:layout_height="60dp"
+                android:text="Manage Records &amp; Audit Logs"
+                app:cornerRadius="12dp"
+                android:layout_marginBottom="32dp"
+                app:icon="@android:drawable/ic_menu_edit" />
+
+            <!-- Insights Section -->
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Portfolio Breakdown" android:textColor="#BB86FC" android:textSize="16sp" android:textStyle="bold" android:layout_marginBottom="12dp" />
+            <LinearLayout android:id="@+id/layout_summary_category_list" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginBottom="24dp" />
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Monthly Data Insights" android:textColor="#BB86FC" android:textSize="16sp" android:textStyle="bold" android:layout_marginBottom="12dp" />
+            <LinearLayout android:id="@+id/layout_summary_trends_monthly" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginBottom="24dp" />
+
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Weekly Audit Trends" android:textColor="#BB86FC" android:textSize="16sp" android:textStyle="bold" android:layout_marginBottom="12dp" />
+            <LinearLayout android:id="@+id/layout_summary_trends_weekly" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginBottom="40dp" />
+
+        </LinearLayout>
+    </androidx.core.widget.NestedScrollView>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

@@ -110,14 +110,20 @@ exports.deleteUser = async (req, res) => {
 exports.searchUser = async (req, res) => {
     try {
         const { name, email } = req.query;
-        const searchTerm = (name || email || "").trim();
+        
+        // Clean up input: handle cases where Retrofit/Axios might send string "null" or "undefined"
+        const cleanName = (name && name !== "null" && name !== "undefined") ? name.trim() : "";
+        const cleanEmail = (email && email !== "null" && email !== "undefined") ? email.trim() : "";
+        const searchTerm = (cleanName || cleanEmail);
 
         if (!searchTerm) {
             return respond(res, 400, false, "Please provide a name or email identity to search.");
         }
 
+        console.log(`[SEARCH] Query: name='${name}', email='${email}' -> term='${searchTerm}'`);
 
         // Use a case-insensitive fuzzy search that matches start or middle of strings
+        // We find multiple and return the most relevant or just the first one
         const user = await User.findOne({
             $or: [
                 { email: { $regex: searchTerm, $options: 'i' } },
@@ -126,13 +132,13 @@ exports.searchUser = async (req, res) => {
         });
 
         if (!user) {
-            console.warn(`Search failed for term: ${searchTerm}`);
-            return respond(res, 404, false, "Identity not found in system logs.");
+            console.warn(`[SEARCH] Failed for term: ${searchTerm}`);
+            return respond(res, 404, false, "No identity found matching the query.");
         }
 
         respond(res, 200, true, "Identity identified.", user);
     } catch (err) {
-        console.error("Search Error:", err.message);
+        console.error("[SEARCH] Error:", err.message);
         respond(res, 500, false, "Server Audit Error: " + err.message);
     }
 };

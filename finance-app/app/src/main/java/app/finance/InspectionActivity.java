@@ -1,6 +1,7 @@
 package app.finance;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -25,6 +26,7 @@ public class InspectionActivity extends AppCompatActivity {
     private TextView tvName, tvEmail, tvBalance, tvTotalIncome, tvTotalExpense;
     private LinearLayout layoutCategoryList, layoutTrends, layoutActivityFeed, panelAddRecord;
     private com.google.android.material.button.MaterialButton btnToggleStatus, btnAddIncome, btnAddExpense;
+    private com.google.android.material.chip.ChipGroup chipGroupFilters;
     private EditText etAmount, etCategory;
 
     private FinanceViewModel viewModel;
@@ -71,6 +73,7 @@ public class InspectionActivity extends AppCompatActivity {
         btnAddExpense = findViewById(R.id.btn_inspect_add_expense);
         etAmount = findViewById(R.id.et_inspect_record_amount);
         etCategory = findViewById(R.id.et_inspect_record_cat);
+        chipGroupFilters = findViewById(R.id.chip_group_filters);
 
         tvName.setText(targetUserName);
         tvEmail.setText(targetUserEmail);
@@ -90,6 +93,10 @@ public class InspectionActivity extends AppCompatActivity {
         btnAddIncome.setOnClickListener(v -> submitTargetRecord("income"));
         btnAddExpense.setOnClickListener(v -> submitTargetRecord("expense"));
 
+        chipGroupFilters.setOnCheckedChangeListener((group, checkedId) -> {
+            fetchTargetSummary();
+        });
+
         fetchTargetSummary();
     }
 
@@ -101,6 +108,12 @@ public class InspectionActivity extends AppCompatActivity {
     }
 
     private void fetchTargetSummary() {
+        String filterType = null;
+        int checkedId = chipGroupFilters.getCheckedChipId();
+        if (checkedId == R.id.chip_filter_income) filterType = "income";
+        else if (checkedId == R.id.chip_filter_expense) filterType = "expense";
+
+        final String finalType = filterType;
         viewModel.getSummary(currentUserId, targetUserId).observe(this, response -> {
             if (response != null && response.getData() != null) {
                 Summary s = response.getData();
@@ -137,11 +150,13 @@ public class InspectionActivity extends AppCompatActivity {
                     }
                 }
 
-                // 4. Activity Feed (with Delete capability)
+                // 4. Activity Feed (with Edit and Delete capability)
                 layoutActivityFeed.removeAllViews();
                 if (s.getRecentActivity() != null) {
                     for (Record rec : s.getRecentActivity()) {
-                        displayActivityItem(rec);
+                        if (finalType == null || finalType.equals(rec.getType())) {
+                            displayActivityItem(rec);
+                        }
                     }
                 }
 
@@ -166,6 +181,9 @@ public class InspectionActivity extends AppCompatActivity {
         
         view.setPadding(0, 16, 0, 16);
         
+        // Edit on Single Tap
+        view.setOnClickListener(v -> showEditRecordDialog(rec));
+
         // Add Delete on Long Press
         view.setOnLongClickListener(v -> {
             new androidx.appcompat.app.AlertDialog.Builder(this)
@@ -225,5 +243,42 @@ public class InspectionActivity extends AppCompatActivity {
                 fetchTargetSummary();
             }
         });
+    }
+
+    private void showEditRecordDialog(Record rec) {
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.setPadding(40, 20, 40, 20);
+
+        final EditText etEditAmt = new EditText(this);
+        etEditAmt.setHint("Amount");
+        etEditAmt.setText(String.valueOf(rec.getAmount()));
+        etEditAmt.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        layout.addView(etEditAmt);
+
+        final EditText etEditCat = new EditText(this);
+        etEditCat.setHint("Category");
+        etEditCat.setText(rec.getCategory());
+        layout.addView(etEditCat);
+
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Modify Financial Entry")
+            .setView(layout)
+            .setPositiveButton("Update", (dialog, which) -> {
+                String valAmt = etEditAmt.getText().toString();
+                String valCat = etEditCat.getText().toString();
+                if (!valAmt.isEmpty() && !valCat.isEmpty()) {
+                    rec.setAmount(Double.parseDouble(valAmt));
+                    rec.setCategory(valCat);
+                    viewModel.updateRecord(currentUserId, rec.getId(), rec).observe(this, response -> {
+                        if (response != null && response.isSuccess()) {
+                            Toast.makeText(this, "Record updated.", Toast.LENGTH_SHORT).show();
+                            fetchTargetSummary();
+                        }
+                    });
+                }
+            })
+            .setNegativeButton("Cancel", null)
+            .show();
     }
 }

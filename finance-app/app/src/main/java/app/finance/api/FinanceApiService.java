@@ -9,6 +9,7 @@ import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.Header;
 import retrofit2.http.POST;
@@ -49,6 +50,13 @@ public interface FinanceApiService {
     @POST("records")
     Call<ApiResponse<Record>> addRecord(
             @Header("X-User-Id") String userId,
+            @Body Record record
+    );
+
+    @PUT("records/{id}")
+    Call<ApiResponse<Record>> updateRecord(
+            @Header("X-User-Id") String userId,
+            @Path("id") int id,
             @Body Record record
     );
 

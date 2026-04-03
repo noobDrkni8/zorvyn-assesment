@@ -135,7 +135,7 @@ public class ClientAdminActivity extends AppCompatActivity {
         tvStatus.setTextColor(isActive ? 0xFF03DAC5 : 0xFFCF6679);
 
         card.setOnClickListener(v -> {
-            Intent intent = new Intent(this, InspectionActivity.class);
+            Intent intent = new Intent(this, SummaryActivity.class);
             intent.putExtra("CURRENT_USER_ID", currentUserId);
             intent.putExtra("CURRENT_USER_ROLE", sessionManager.getUserRole());
             intent.putExtra("TARGET_USER_ID", String.valueOf(u.getId()));

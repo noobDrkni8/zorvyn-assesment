@@ -26,6 +26,26 @@ public class Record {
         return targetUserId;
     }
 
+    public void setAmount(double amount) {
+        this.amount = amount;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
     public int getId() {
         return id;
     }

@@ -53,4 +53,8 @@ public class FinanceViewModel extends ViewModel {
     public LiveData<ApiResponse<Void>> deleteRecord(String userId, int recordId) {
         return repository.deleteRecord(userId, recordId);
     }
+
+    public LiveData<ApiResponse<Record>> updateRecord(String userId, int recordId, Record record) {
+        return repository.updateRecord(userId, recordId, record);
+    }
 }
