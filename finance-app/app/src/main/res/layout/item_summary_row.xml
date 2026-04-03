@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingVertical="12dp">
+ 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical"
+        android:layout_marginBottom="4dp">
+ 
+        <TextView
+            android:id="@+id/tv_summary_row_label"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            android:text="Category Name"
+            android:textColor="#E0E0E0"
+            android:textSize="14sp" />
+ 
+        <TextView
+            android:id="@+id/tv_summary_row_value"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="$0.00"
+            android:textColor="#FFFFFF"
+            android:textSize="14sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+ 
+    <com.google.android.material.progressindicator.LinearProgressIndicator
+        android:id="@+id/progress_summary_row"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:indicatorColor="#03DAC5"
+        app:trackColor="#1AFFFFFF"
+        app:trackThickness="4dp"
+        app:trackCornerRadius="2dp"
+        android:progress="50" />
+ 
+</LinearLayout>

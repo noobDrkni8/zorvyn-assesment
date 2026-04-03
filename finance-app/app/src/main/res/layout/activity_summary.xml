@@ -27,23 +27,40 @@
             android:orientation="vertical"
             android:padding="20dp">
 
-            <!-- User Header -->
-            <TextView
-                android:id="@+id/tv_summary_user_name"
-                android:layout_width="wrap_content"
+            <!-- User Identity Card -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="User Name"
-                android:textColor="#FFFFFF"
-                android:textSize="24sp"
-                android:textStyle="bold" />
-            <TextView
-                android:id="@+id/tv_summary_user_email"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="user@zorvyn.com"
-                android:textColor="#88FFFFFF"
-                android:textSize="14sp"
-                android:layout_marginBottom="24dp" />
+                android:layout_marginBottom="24dp"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeWidth="1dp"
+                app:strokeColor="#33FFFFFF"
+                app:cardBackgroundColor="#1AFFFFFF">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+                    <TextView
+                        android:id="@+id/tv_summary_user_name"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Client Identity"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                    <TextView
+                        android:id="@+id/tv_summary_user_email"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Audit Context"
+                        android:textColor="#88FFFFFF"
+                        android:textSize="12sp"
+                        android:visibility="gone" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
 
             <!-- Net Balance Highlight -->
             <com.google.android.material.card.MaterialCardView
@@ -77,7 +94,7 @@
                         android:textStyle="bold" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
-
+ 
             <!-- Income / Expense Split -->
             <LinearLayout
                 android:layout_width="match_parent"
@@ -86,6 +103,7 @@
                 android:weightSum="2"
                 android:layout_marginBottom="24dp">
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_summary_income"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -102,6 +120,7 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
                 <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/card_summary_expense"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
@@ -118,15 +137,35 @@
                     </LinearLayout>
                 </com.google.android.material.card.MaterialCardView>
             </LinearLayout>
-
-            <com.google.android.material.button.MaterialButton
-                android:id="@+id/btn_summary_goto_management"
+ 
+            <!-- Dashboard Quick-Filters -->
+            <com.google.android.material.chip.ChipGroup
+                android:id="@+id/chip_group_summary_filter"
                 android:layout_width="match_parent"
-                android:layout_height="60dp"
-                android:text="Manage Records &amp; Audit Logs"
-                app:cornerRadius="12dp"
-                android:layout_marginBottom="32dp"
-                app:icon="@android:drawable/ic_menu_edit" />
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="24dp"
+                app:singleSelection="true">
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_summary_all"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="All Overview"
+                    android:checked="true" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_summary_income"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Income Stats" />
+                <com.google.android.material.chip.Chip
+                    android:id="@+id/chip_summary_expense"
+                    style="@style/Widget.MaterialComponents.Chip.Choice"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Expense Stats" />
+            </com.google.android.material.chip.ChipGroup>
+
 
             <!-- Insights Section -->
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Portfolio Breakdown" android:textColor="#BB86FC" android:textSize="16sp" android:textStyle="bold" android:layout_marginBottom="12dp" />
@@ -135,7 +174,7 @@
             <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Monthly Data Insights" android:textColor="#BB86FC" android:textSize="16sp" android:textStyle="bold" android:layout_marginBottom="12dp" />
             <LinearLayout android:id="@+id/layout_summary_trends_monthly" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginBottom="24dp" />
 
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Weekly Audit Trends" android:textColor="#BB86FC" android:textSize="16sp" android:textStyle="bold" android:layout_marginBottom="12dp" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Weekly Data Insights" android:textColor="#BB86FC" android:textSize="16sp" android:textStyle="bold" android:layout_marginBottom="12dp" />
             <LinearLayout android:id="@+id/layout_summary_trends_weekly" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginBottom="40dp" />
 
         </LinearLayout>

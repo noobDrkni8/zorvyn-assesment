@@ -10,6 +10,7 @@ public class Summary {
     private List<Record> recentActivity;
     private List<MonthlyTrend> monthlyTrends;
     private List<WeeklyTrend> weeklyTrends;
+    private int savingsRatio;
 
     public double getTotalIncome() {
         return totalIncome;
@@ -39,9 +40,14 @@ public class Summary {
         return weeklyTrends;
     }
 
+    public int getSavingsRatio() {
+        return savingsRatio;
+    }
+
     public static class CategoryTotal {
         private String category;
         private double total;
+        private double percentage;
 
         public String getCategory() {
             return category;
@@ -49,6 +55,10 @@ public class Summary {
 
         public double getTotal() {
             return total;
+        }
+ 
+        public double getPercentage() {
+            return percentage;
         }
     }
 

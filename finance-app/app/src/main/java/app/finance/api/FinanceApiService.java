@@ -30,7 +30,8 @@ public interface FinanceApiService {
     @GET("records/summary")
     Call<ApiResponse<Summary>> getSummary(
             @Header("X-User-Id") String userId,
-            @Query("targetUserId") String targetId
+            @Query("targetUserId") String targetId,
+            @Query("type") String type
     );
 
     @DELETE("records/{id}")

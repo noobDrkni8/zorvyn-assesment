@@ -22,8 +22,8 @@ public class FinanceViewModel extends ViewModel {
         return repository.login(user);
     }
 
-    public LiveData<ApiResponse<Summary>> getSummary(String userId, String targetId) {
-        return repository.getSummary(userId, targetId);
+    public LiveData<ApiResponse<Summary>> getSummary(String userId, String targetId, String type) {
+        return repository.getSummary(userId, targetId, type);
     }
 
     public LiveData<ApiResponse<List<User>>> getUsers(String userId) {

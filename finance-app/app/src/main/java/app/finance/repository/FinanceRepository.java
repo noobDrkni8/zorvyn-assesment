@@ -43,9 +43,9 @@ public class FinanceRepository {
         return data;
     }
 
-    public LiveData<ApiResponse<Summary>> getSummary(String userId, String targetId) {
+    public LiveData<ApiResponse<Summary>> getSummary(String userId, String targetId, String type) {
         MutableLiveData<ApiResponse<Summary>> data = new MutableLiveData<>();
-        apiService.getSummary(userId, targetId).enqueue(new Callback<ApiResponse<Summary>>() {
+        apiService.getSummary(userId, targetId, type).enqueue(new Callback<ApiResponse<Summary>>() {
             @Override
             public void onResponse(Call<ApiResponse<Summary>> call, Response<ApiResponse<Summary>> response) {
                 if (response.isSuccessful()) {

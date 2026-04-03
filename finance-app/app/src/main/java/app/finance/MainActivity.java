@@ -286,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
 
     private void fetchDashboardSummary() {
         String targetId = (currentUserRole != null && currentUserRole.toLowerCase().equals("admin")) ? "all" : null;
-        viewModel.getSummary(currentUserId, targetId).observe(this, response -> {
+        viewModel.getSummary(currentUserId, targetId, null).observe(this, response -> {
             if (response != null && response.getData() != null) {
                 Summary s = response.getData();
                 tvNetBalance.setText(String.format(Locale.getDefault(), "$%.2f", s.getNetBalance()));

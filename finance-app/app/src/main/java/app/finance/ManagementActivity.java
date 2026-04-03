@@ -1,6 +1,7 @@
 package app.finance;
 
 import android.os.Bundle;
+import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -23,13 +24,10 @@ import java.util.Locale;
 public class ManagementActivity extends AppCompatActivity {
 
     private String currentUserId, currentUserRole, targetUserId;
-    private String targetUserName, targetUserEmail;
+    private String targetUserName, targetUserEmail, activeFilter;
 
     private LinearLayout layoutActivityFeed;
-    private EditText etAmount;
-    private Spinner spinnerCategory;
     private com.google.android.material.button.MaterialButton btnAddIncome, btnAddExpense;
-    private ChipGroup chipFilters;
 
     private FinanceViewModel viewModel;
 
@@ -62,43 +60,44 @@ public class ManagementActivity extends AppCompatActivity {
         }
 
         layoutActivityFeed = findViewById(R.id.layout_mgmt_activity_feed);
-        etAmount = findViewById(R.id.et_mgmt_record_amount);
-        spinnerCategory = findViewById(R.id.spinner_mgmt_category);
-        btnAddIncome = findViewById(R.id.btn_mgmt_add_income);
-        btnAddExpense = findViewById(R.id.btn_mgmt_add_expense);
-        chipFilters = findViewById(R.id.chip_group_mgmt_filters);
-
-        // Populate Spinner
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-                android.R.layout.simple_spinner_item, CATEGORIES);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCategory.setAdapter(adapter);
-
+        btnAddIncome = findViewById(R.id.btn_mgmt_add_income_start);
+        btnAddExpense = findViewById(R.id.btn_mgmt_add_expense_start);
+ 
+        activeFilter = getIntent().getStringExtra("INITIAL_FILTER");
+        updateSubtitle(toolbar);
+ 
         // Action Listeners
-        btnAddIncome.setOnClickListener(v -> submitRecord("income"));
-        btnAddExpense.setOnClickListener(v -> submitRecord("expense"));
+        btnAddIncome.setOnClickListener(v -> {
+            android.content.Intent intent = new android.content.Intent(this, AddIncomeActivity.class);
+            intent.putExtra("CURRENT_USER_ID", currentUserId);
+            intent.putExtra("TARGET_USER_ID", targetUserId);
+            startActivity(intent);
+        });
+ 
+        btnAddExpense.setOnClickListener(v -> {
+            android.content.Intent intent = new android.content.Intent(this, AddExpenseActivity.class);
+            intent.putExtra("CURRENT_USER_ID", currentUserId);
+            intent.putExtra("TARGET_USER_ID", targetUserId);
+            startActivity(intent);
+        });
+ 
+        fetchAuditTrail();
+    }
 
-        chipFilters.setOnCheckedChangeListener((group, checkedId) -> fetchAuditTrail());
-
+    @Override
+    protected void onResume() {
+        super.onResume();
         fetchAuditTrail();
     }
 
     private void fetchAuditTrail() {
-        String filterType = null;
-        int checkedId = chipFilters.getCheckedChipId();
-        if (checkedId == R.id.chip_filter_income) filterType = "income";
-        else if (checkedId == R.id.chip_filter_expense) filterType = "expense";
-
-        final String finalType = filterType;
-        viewModel.getSummary(currentUserId, targetUserId).observe(this, response -> {
+        viewModel.getSummary(currentUserId, targetUserId, activeFilter).observe(this, response -> {
             if (response != null && response.getData() != null) {
-                Summary s = response.getData();
+                app.finance.models.Summary s = response.getData();
                 layoutActivityFeed.removeAllViews();
                 if (s.getRecentActivity() != null) {
-                    for (Record rec : s.getRecentActivity()) {
-                        if (finalType == null || finalType.equals(rec.getType())) {
-                            displayActivityItem(rec);
-                        }
+                    for (app.finance.models.Record rec : s.getRecentActivity()) {
+                        displayActivityItem(rec);
                     }
                 }
             }
@@ -106,54 +105,76 @@ public class ManagementActivity extends AppCompatActivity {
     }
 
     private void displayActivityItem(Record rec) {
-        android.view.View view = getLayoutInflater().inflate(android.R.layout.simple_list_item_2, layoutActivityFeed, false);
-        TextView tv1 = view.findViewById(android.R.id.text1);
-        TextView tv2 = view.findViewById(android.R.id.text2);
+        View card = getLayoutInflater().inflate(R.layout.item_transaction_card, layoutActivityFeed, false);
+        
+        TextView tvCategory = card.findViewById(R.id.card_transaction_category);
+        TextView tvDate = card.findViewById(R.id.card_transaction_date);
+        TextView tvAmount = card.findViewById(R.id.card_transaction_amount);
+        android.widget.ImageView ivIcon = card.findViewById(R.id.card_transaction_icon);
+        
+        tvCategory.setText(rec.getCategory());
+        tvDate.setText(String.format("%s • %s", rec.getDate(), rec.getNotes()));
+        
+        boolean isIncome = "income".equalsIgnoreCase(rec.getType());
+        String prefix = isIncome ? "+" : "-";
+        tvAmount.setText(String.format(Locale.getDefault(), "%s$%.2f", prefix, rec.getAmount()));
+        tvAmount.setTextColor(isIncome ? 0xFF03DAC5 : 0xFFCF6679);
+        
+        // Icon Mapping
+        int iconRes = getIconForCategory(rec.getCategory());
+        ivIcon.setImageResource(iconRes);
+        ivIcon.setColorFilter(isIncome ? 0xFF03DAC5 : 0xFFCF6679);
 
-        String symbol = "income".equals(rec.getType()) ? "+" : "-";
-        int color = "income".equals(rec.getType()) ? 0xFF03DAC5 : 0xFFCF6679;
-
-        tv1.setText(String.format(Locale.getDefault(), "%s %s$%.2f - %s", rec.getDate(), symbol, rec.getAmount(), rec.getCategory()));
-        tv1.setTextColor(color);
-        tv2.setText(rec.getNotes() != null ? rec.getNotes() : "No Audit Description");
-        tv2.setTextColor((int) 0xFF88FFFFFFL);
-
-        view.setPadding(0, 16, 0, 16);
-        view.setOnClickListener(v -> showEditDialog(rec));
-        view.setOnLongClickListener(v -> {
-            new androidx.appcompat.app.AlertDialog.Builder(this)
-                .setTitle("Delete Audit Trail?")
-                .setMessage("Are you sure you want to remove this financial entry?")
-                .setPositiveButton("Delete", (dialog, which) -> deleteRecord(rec.getId()))
-                .setNegativeButton("Cancel", null)
-                .show();
+        card.setOnClickListener(v -> showEditDialog(rec));
+        card.setOnLongClickListener(v -> {
+            showDeleteConfirm(rec);
             return true;
         });
 
-        layoutActivityFeed.addView(view);
+        layoutActivityFeed.addView(card);
     }
 
-    private void submitRecord(String type) {
-        String amt = etAmount.getText().toString();
-        String cat = spinnerCategory.getSelectedItem().toString();
-        if (amt.isEmpty() || cat.equals(CATEGORIES[0])) {
-            Toast.makeText(this, "Amount & Category Required", Toast.LENGTH_SHORT).show();
-            return;
-        }
+    private int getIconForCategory(String cat) {
+        if (cat == null) return android.R.drawable.ic_menu_help;
+        String c = cat.toLowerCase();
+        if (c.contains("salary")) return android.R.drawable.ic_menu_myplaces;
+        if (c.contains("food")) return android.R.drawable.ic_menu_view;
+        if (c.contains("rent")) return android.R.drawable.ic_menu_today;
+        if (c.contains("transport")) return android.R.drawable.ic_menu_directions;
+        if (c.contains("utilities")) return android.R.drawable.ic_menu_edit;
+        if (c.contains("health")) return android.R.drawable.ic_dialog_info;
+        if (c.contains("investment")) return android.R.drawable.ic_menu_share;
+        if (c.contains("gift")) return android.R.drawable.ic_menu_send;
+        return android.R.drawable.ic_menu_help;
+    }
 
-        double amount = Double.parseDouble(amt);
-        String date = new java.text.SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new java.util.Date());
-        Record r = new Record(amount, type, cat, date, "Inspector Audit");
-        r.setTargetUserId(targetUserId);
+    private void showDeleteConfirm(Record rec) {
+        new androidx.appcompat.app.AlertDialog.Builder(this)
+            .setTitle("Purge Audit Record?")
+            .setMessage("Are you sure you want to remove this financial entry from the auditor ledger?")
+            .setPositiveButton("Purge", (dialog, which) -> deleteRecord(rec.getId()))
+            .setNegativeButton("Cancel", null)
+            .show();
+    }
 
-        viewModel.addRecord(currentUserId, r).observe(this, response -> {
-            if (response != null && response.isSuccess()) {
-                Toast.makeText(this, "Audit record logged!", Toast.LENGTH_SHORT).show();
-                etAmount.setText("");
-                spinnerCategory.setSelection(0);
-                fetchAuditTrail();
+    private void updateSubtitle(Toolbar toolbar) {
+        if (activeFilter != null) {
+            String sub = activeFilter.substring(0, 1).toUpperCase() + activeFilter.substring(1) + " Audit History";
+            toolbar.setSubtitle(sub);
+            
+            // Dynamic Action Filtering
+            if ("income".equalsIgnoreCase(activeFilter)) {
+                btnAddExpense.setVisibility(View.GONE);
+                btnAddIncome.setVisibility(View.VISIBLE);
+            } else if ("expense".equalsIgnoreCase(activeFilter)) {
+                btnAddIncome.setVisibility(View.GONE);
+                btnAddExpense.setVisibility(View.VISIBLE);
             }
-        });
+        } else {
+            toolbar.setSubtitle("Full Transaction History");
+            btnAddIncome.setVisibility(View.VISIBLE);
+            btnAddExpense.setVisibility(View.VISIBLE);
+        }
     }
 
     private void showEditDialog(Record rec) {

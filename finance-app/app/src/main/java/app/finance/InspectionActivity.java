@@ -114,7 +114,7 @@ public class InspectionActivity extends AppCompatActivity {
         else if (checkedId == R.id.chip_filter_expense) filterType = "expense";
 
         final String finalType = filterType;
-        viewModel.getSummary(currentUserId, targetUserId).observe(this, response -> {
+        viewModel.getSummary(currentUserId, targetUserId, null).observe(this, response -> {
             if (response != null && response.getData() != null) {
                 Summary s = response.getData();
                 

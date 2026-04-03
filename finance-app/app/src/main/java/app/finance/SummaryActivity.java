@@ -2,8 +2,10 @@ package app.finance;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
@@ -21,7 +23,7 @@ public class SummaryActivity extends AppCompatActivity {
 
     private TextView tvName, tvEmail, tvBalance, tvTotalIncome, tvTotalExpense;
     private LinearLayout layoutCategoryList, layoutTrendsMonthly, layoutTrendsWeekly;
-    private com.google.android.material.button.MaterialButton btnManage;
+    private com.google.android.material.card.MaterialCardView cardIncome, cardExpense;
 
     private FinanceViewModel viewModel;
 
@@ -55,72 +57,113 @@ public class SummaryActivity extends AppCompatActivity {
         layoutCategoryList = findViewById(R.id.layout_summary_category_list);
         layoutTrendsMonthly = findViewById(R.id.layout_summary_trends_monthly);
         layoutTrendsWeekly = findViewById(R.id.layout_summary_trends_weekly);
-        btnManage = findViewById(R.id.btn_summary_goto_management);
+        cardIncome = findViewById(R.id.card_summary_income);
+        cardExpense = findViewById(R.id.card_summary_expense);
 
         tvName.setText(targetUserName);
-        tvEmail.setText(targetUserEmail);
-
-        btnManage.setOnClickListener(v -> {
-            Intent intent = new Intent(this, ManagementActivity.class);
+        tvEmail.setVisibility(View.GONE); // Email is now merged into Name field
+ 
+        com.google.android.material.chip.ChipGroup filterGroup = findViewById(R.id.chip_group_summary_filter);
+        filterGroup.setOnCheckedStateChangeListener((group, checkedIds) -> {
+            String filter = null;
+            if (checkedIds.contains(R.id.chip_summary_income)) filter = "income";
+            else if (checkedIds.contains(R.id.chip_summary_expense)) filter = "expense";
+            fetchSummary(filter);
+        });
+ 
+        // Card Navigation
+        cardIncome.setOnClickListener(v -> {
+            Intent intent = new Intent(this, IncomeHistoryActivity.class);
             intent.putExtra("CURRENT_USER_ID", currentUserId);
-            intent.putExtra("CURRENT_USER_ROLE", currentUserRole);
             intent.putExtra("TARGET_USER_ID", targetUserId);
-            intent.putExtra("TARGET_USER_NAME", targetUserName);
-            intent.putExtra("TARGET_USER_EMAIL", targetUserEmail);
             startActivity(intent);
         });
-
-        fetchSummary();
+ 
+        cardExpense.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ExpenseHistoryActivity.class);
+            intent.putExtra("CURRENT_USER_ID", currentUserId);
+            intent.putExtra("TARGET_USER_ID", targetUserId);
+            startActivity(intent);
+        });
+ 
+        fetchSummary(null);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        fetchSummary();
+        // Keep current filter if possible, default to null for now
+        fetchSummary(null);
     }
 
-    private void fetchSummary() {
-        viewModel.getSummary(currentUserId, targetUserId).observe(this, response -> {
+    private void fetchSummary(String type) {
+        viewModel.getSummary(currentUserId, targetUserId, type).observe(this, response -> {
             if (response != null && response.getData() != null) {
                 Summary s = response.getData();
+                
+                tvName.setText("Client - " + targetUserEmail);
+                
                 tvBalance.setText(String.format(Locale.getDefault(), "$%.2f", s.getNetBalance()));
                 tvTotalIncome.setText(String.format(Locale.getDefault(), "+$%.2f", s.getTotalIncome()));
                 tvTotalExpense.setText(String.format(Locale.getDefault(), "-$%.2f", s.getTotalExpense()));
 
                 layoutCategoryList.removeAllViews();
                 if (s.getCategoryWise() != null) {
-                    for (Summary.CategoryTotal item : s.getCategoryWise()) {
-                        TextView tv = new TextView(this);
-                        tv.setText(String.format(Locale.getDefault(), "• %s: $%.2f", item.getCategory(), item.getTotal()));
-                        tv.setTextColor((int) 0xFFBB86FC);
-                        tv.setPadding(0, 4, 0, 8);
-                        layoutCategoryList.addView(tv);
+                    for (Summary.CategoryTotal cat : s.getCategoryWise()) {
+                        View row = getLayoutInflater().inflate(R.layout.item_summary_row, layoutCategoryList, false);
+                        TextView tvLabel = row.findViewById(R.id.tv_summary_row_label);
+                        TextView tvValue = row.findViewById(R.id.tv_summary_row_value);
+                        com.google.android.material.progressindicator.LinearProgressIndicator pb = row.findViewById(R.id.progress_summary_row);
+                        
+                        tvLabel.setText(cat.getCategory());
+                        tvValue.setText(String.format(Locale.getDefault(), "$%.2f", cat.getTotal()));
+                        pb.setProgress((int) cat.getPercentage());
+                        
+                        // Set color based on current filter or category context
+                        layoutCategoryList.addView(row);
                     }
                 }
 
                 layoutTrendsMonthly.removeAllViews();
                 if (s.getMonthlyTrends() != null) {
                     for (Summary.MonthlyTrend trend : s.getMonthlyTrends()) {
-                        TextView tv = new TextView(this);
-                        String symbol = "income".equals(trend.getType()) ? "📈" : "📉";
-                        tv.setText(String.format(Locale.getDefault(), "%s %s: $%.2f (%s)", symbol, trend.getMonth(), trend.getTotal(), trend.getType().toUpperCase()));
-                        tv.setTextColor((int) 0xFF88FFFFFFL);
-                        tv.setPadding(0, 4, 0, 4);
-                        layoutTrendsMonthly.addView(tv);
+                        View row = getLayoutInflater().inflate(R.layout.item_trend_row, layoutTrendsMonthly, false);
+                        TextView tvLabel = row.findViewById(R.id.tv_summary_row_label);
+                        TextView tvValue = row.findViewById(R.id.tv_summary_row_value);
+
+                        boolean isInc = "income".equalsIgnoreCase(trend.getType());
+                        String symbol = isInc ? "📈" : "📉";
+                        tvLabel.setText(String.format("%s %s", symbol, trend.getMonth()));
+                        tvValue.setText(String.format(Locale.getDefault(), "$%.2f", trend.getTotal()));
+                        tvValue.setTextColor(isInc ? 0xFF03DAC5 : 0xFFCF6679);
+                        layoutTrendsMonthly.addView(row);
                     }
                 }
 
+                // Weekly Data Insights (Now showing Recent Transactions)
                 layoutTrendsWeekly.removeAllViews();
-                if (s.getWeeklyTrends() != null) {
-                    for (Summary.WeeklyTrend trend : s.getWeeklyTrends()) {
-                        TextView tv = new TextView(this);
-                        String symbol = "income".equals(trend.getType()) ? "🔄" : "💸";
-                        tv.setText(String.format(Locale.getDefault(), "%s %s: $%.2f", symbol, trend.getWeek(), trend.getTotal()));
-                        tv.setTextColor((int) 0xFFBB86FC);
-                        tv.setPadding(0, 4, 0, 4);
-                        layoutTrendsWeekly.addView(tv);
+                if (s.getRecentActivity() != null) {
+                    for (app.finance.models.Record rec : s.getRecentActivity()) {
+                        View row = getLayoutInflater().inflate(R.layout.item_dashboard_transaction, layoutTrendsWeekly, false);
+                        
+                        TextView tvCat = row.findViewById(R.id.tv_dash_trans_category);
+                        TextView tvNote = row.findViewById(R.id.tv_dash_trans_note);
+                        TextView tvAmt = row.findViewById(R.id.tv_dash_trans_amount);
+                        TextView tvDate = row.findViewById(R.id.tv_dash_trans_date);
+ 
+                        boolean isInc = "income".equalsIgnoreCase(rec.getType());
+                        tvCat.setText(rec.getCategory());
+                        tvNote.setText(rec.getNotes());
+                        tvDate.setText(rec.getDate());
+                        
+                        tvAmt.setText(String.format(Locale.getDefault(), "%s$%.2f", isInc ? "+" : "-", rec.getAmount()));
+                        tvAmt.setTextColor(isInc ? 0xFF03DAC5 : 0xFFCF6679);
+ 
+                        layoutTrendsWeekly.addView(row);
                     }
                 }
+            } else {
+                Toast.makeText(this, "Audit Sync Failed: " + (response != null ? response.getMessage() : "Unknown"), Toast.LENGTH_SHORT).show();
             }
         });
     }
