@@ -50,7 +50,7 @@ public class HistoryActivity extends AppCompatActivity {
             }
         }
 
-        rvHistory = findViewById(rv_history);
+        rvHistory = findViewById(R.id.rv_history);
         progressBar = findViewById(R.id.pb_history);
 
         rvHistory.setLayoutManager(new LinearLayoutManager(this));

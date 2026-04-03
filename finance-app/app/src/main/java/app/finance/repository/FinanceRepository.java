@@ -31,13 +31,13 @@ public class FinanceRepository {
                 if (response.isSuccessful()) {
                     data.setValue(response.body());
                 } else {
-                    data.setValue(null);
+                    data.setValue(new ApiResponse<>(false, "Auth failed: " + response.code(), null));
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<User>> call, Throwable t) {
-                data.setValue(null);
+                data.setValue(new ApiResponse<>(false, "Network error: " + t.getMessage(), null));
             }
         });
         return data;
@@ -50,12 +50,14 @@ public class FinanceRepository {
             public void onResponse(Call<ApiResponse<Summary>> call, Response<ApiResponse<Summary>> response) {
                 if (response.isSuccessful()) {
                     data.setValue(response.body());
+                } else {
+                    data.setValue(new ApiResponse<>(false, "Error: " + response.code(), null));
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<Summary>> call, Throwable t) {
-                data.setValue(null);
+                data.setValue(new ApiResponse<>(false, t.getMessage(), null));
             }
         });
         return data;
@@ -68,12 +70,14 @@ public class FinanceRepository {
             public void onResponse(Call<ApiResponse<List<User>>> call, Response<ApiResponse<List<User>>> response) {
                 if (response.isSuccessful()) {
                     data.setValue(response.body());
+                } else {
+                    data.setValue(new ApiResponse<>(false, "Error: " + response.code(), null));
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<List<User>>> call, Throwable t) {
-                data.setValue(null);
+                data.setValue(new ApiResponse<>(false, t.getMessage(), null));
             }
         });
         return data;
@@ -86,12 +90,14 @@ public class FinanceRepository {
             public void onResponse(Call<ApiResponse<Record>> call, Response<ApiResponse<Record>> response) {
                 if (response.isSuccessful()) {
                     data.setValue(response.body());
+                } else {
+                    data.setValue(new ApiResponse<>(false, "Error: " + response.code(), null));
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<Record>> call, Throwable t) {
-                data.setValue(null);
+                data.setValue(new ApiResponse<>(false, t.getMessage(), null));
             }
         });
         return data;
@@ -104,12 +110,14 @@ public class FinanceRepository {
             public void onResponse(Call<ApiResponse<List<Record>>> call, Response<ApiResponse<List<Record>>> response) {
                 if (response.isSuccessful()) {
                     data.setValue(response.body());
+                } else {
+                    data.setValue(new ApiResponse<>(false, "Error: " + response.code(), null));
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<List<Record>>> call, Throwable t) {
-                data.setValue(null);
+                data.setValue(new ApiResponse<>(false, t.getMessage(), null));
             }
         });
         return data;
@@ -122,12 +130,14 @@ public class FinanceRepository {
             public void onResponse(Call<ApiResponse<User>> call, Response<ApiResponse<User>> response) {
                 if (response.isSuccessful()) {
                     data.setValue(response.body());
+                } else {
+                    data.setValue(new ApiResponse<>(false, "Error: " + response.code(), null));
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<User>> call, Throwable t) {
-                data.setValue(null);
+                data.setValue(new ApiResponse<>(false, t.getMessage(), null));
             }
         });
         return data;
@@ -141,13 +151,13 @@ public class FinanceRepository {
                 if (response.isSuccessful()) {
                     data.setValue(response.body());
                 } else {
-                    data.setValue(null);
+                    data.setValue(new ApiResponse<>(false, "Error: " + response.code(), null));
                 }
             }
 
             @Override
             public void onFailure(Call<ApiResponse<User>> call, Throwable t) {
-                data.setValue(null);
+                data.setValue(new ApiResponse<>(false, t.getMessage(), null));
             }
         });
         return data;

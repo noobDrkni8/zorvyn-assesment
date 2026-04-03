@@ -1,10 +1,10 @@
-const db = require("../db/db");
+const User = require("../models/User");
 
 /**
- * Simple authentication middleware.
+ * Simple authentication middleware (MongoDB Version)
  * Expects X-User-Id header to identify the user.
  */
-exports.authenticate = (req, res, next) => {
+exports.authenticate = async (req, res, next) => {
     const userId = req.headers["x-user-id"];
 
     if (!userId) {
@@ -14,8 +14,10 @@ exports.authenticate = (req, res, next) => {
         });
     }
 
-    db.get("SELECT * FROM users WHERE id = ?", [userId], (err, user) => {
-        if (err || !user) {
+    try {
+        const user = await User.findOne({ id: parseInt(userId) });
+
+        if (!user) {
             return res.status(401).json({ 
                 success: false, 
                 message: "Authentication failed: User not found." 
@@ -32,7 +34,13 @@ exports.authenticate = (req, res, next) => {
         // Attach user to request object
         req.user = user;
         next();
-    });
+    } catch (err) {
+        console.error("Auth Middleware Error:", err.message);
+        return res.status(500).json({
+            success: false,
+            message: "Internal Server Error during authentication."
+        });
+    }
 };
 
 /**
@@ -58,6 +66,5 @@ exports.authorize = (roles = []) => {
         }
 
         next();
-
     };
 };

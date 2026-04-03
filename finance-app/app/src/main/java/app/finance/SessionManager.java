@@ -7,6 +7,7 @@ public class SessionManager {
     private static final String PREF_NAME = "FinanceAppSession";
     private static final String KEY_USER_ID = "userId";
     private static final String KEY_ROLE = "userRole";
+    private static final String KEY_LOGGED_IN = "isLoggedIn";
 
     private SharedPreferences pref;
     private SharedPreferences.Editor editor;
@@ -19,17 +20,22 @@ public class SessionManager {
     }
 
     public void createLoginSession(String userId, String role) {
+        editor.putBoolean(KEY_LOGGED_IN, true);
         editor.putString(KEY_USER_ID, userId);
         editor.putString(KEY_ROLE, role);
         editor.commit();
     }
 
+    public boolean isLoggedIn() {
+        return pref.getBoolean(KEY_LOGGED_IN, false);
+    }
+
     public String getUserId() {
-        return pref.getString(KEY_USER_ID, "1"); // Default Admin
+        return pref.getString(KEY_USER_ID, null);
     }
 
     public String getUserRole() {
-        return pref.getString(KEY_ROLE, "Admin");
+        return pref.getString(KEY_ROLE, null);
     }
 
     public void logoutUser() {

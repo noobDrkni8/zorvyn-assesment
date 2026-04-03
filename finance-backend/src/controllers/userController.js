@@ -14,7 +14,6 @@ exports.createUser = async (req, res) => {
             return respond(res, 400, false, "Missing required fields: name, email, role.");
         }
 
-        // Handle custom auto-increment id for Android
         const lastUser = await User.findOne().sort("-id");
         const nextId = lastUser ? lastUser.id + 1 : 1;
 
@@ -87,29 +86,33 @@ exports.deleteUser = async (req, res) => {
     }
 };
 
-// Search User by Name or Email
+// Search User by Name or Email (Robust Version)
 exports.searchUser = async (req, res) => {
     try {
-        const { name } = req.query;
+        let { name } = req.query;
 
         if (!name) {
-            return respond(res, 400, false, "Please provide a name or email to search for.");
+            return respond(res, 400, false, "Please provide a name or email identity to search.");
         }
 
         const searchTerm = name.trim();
+
+        // Use a case-insensitive fuzzy search that matches start or middle of strings
         const user = await User.findOne({
             $or: [
-                { name: new RegExp(searchTerm, 'i') },
-                { email: new RegExp(searchTerm, 'i') }
+                { email: { $regex: searchTerm, $options: 'i' } },
+                { name: { $regex: searchTerm, $options: 'i' } }
             ]
         });
 
         if (!user) {
-            return respond(res, 404, false, "No user found with that name or email.");
+            console.warn(`Search failed for term: ${searchTerm}`);
+            return respond(res, 404, false, "Identity not found in system logs.");
         }
 
-        respond(res, 200, true, "User found successfully.", user);
+        respond(res, 200, true, "Identity identified.", user);
     } catch (err) {
-        respond(res, 500, false, "Server Error: " + err.message);
+        console.error("Search Error:", err.message);
+        respond(res, 500, false, "Server Audit Error: " + err.message);
     }
 };

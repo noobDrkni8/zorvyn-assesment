@@ -7,7 +7,6 @@ const { authenticate, authorize } = require("../middleware/authMiddleware");
 /**
  * @route   POST /api/records
  * @desc    Admin and Analysts can create financial records
- * @access  Protected (Admin, Analyst)
  */
 router.post(
     "/records",
@@ -18,8 +17,6 @@ router.post(
 
 /**
  * @route   GET /api/records/summary
- * @desc    All roles can view their dashboard summary
- * @access  Protected (Admin, Analyst, Viewer)
  */
 router.get(
     "/records/summary",
@@ -30,37 +27,34 @@ router.get(
 
 /**
  * @route   GET /api/records
- * @desc    Admin & Analysts can view detailed records (optionally for a target user)
- * @access  Protected (Admin, Analyst)
+ * @desc    All roles can view records (Admin/Analyst can see target user data)
  */
 router.get(
     "/records",
     authenticate,
-    authorize(["admin", "analyst"]),
+    authorize(["admin", "analyst", "viewer"]),
     recordController.getRecords
 );
 
 /**
  * @route   PUT /api/records/:id
- * @desc    Admin can update records
- * @access  Protected (Admin)
+ * @desc    Admin and Analysts can update records
  */
 router.put(
     "/records/:id",
     authenticate,
-    authorize(["admin"]),
+    authorize(["admin", "analyst"]),
     recordController.updateRecord
 );
 
 /**
  * @route   DELETE /api/records/:id
- * @desc    Admin can delete records
- * @access  Protected (Admin)
+ * @desc    Admin and Analysts can delete records
  */
 router.delete(
     "/records/:id",
     authenticate,
-    authorize(["admin"]),
+    authorize(["admin", "analyst"]),
     recordController.deleteRecord
 );
 
