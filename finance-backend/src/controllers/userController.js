@@ -1,39 +1,55 @@
 const User = require("../models/User");
+const bcrypt = require("bcryptjs");
 
 // Success/Error JSON Format Helper
 const respond = (res, status, success, message, data = null) => {
     return res.status(status).json({ success, message, data });
 };
 
-// Create User
+// Create User (Admin Only)
 exports.createUser = async (req, res) => {
     try {
-        const { name, email, role, status } = req.body;
+        const { name, email, role, status, password } = req.body;
 
-        if (!name || !email || !role) {
-            return respond(res, 400, false, "Missing required fields: name, email, role.");
+        // Strict Role Check: Only Admin can create new identities
+        if (req.user.role.toLowerCase() !== 'admin') {
+            return respond(res, 403, false, "Access Denied: Only Admin can provision new identities.");
+        }
+
+        if (!name || !email || !role || !password) {
+            return respond(res, 400, false, "Missing required fields: name, email, role, and temporary password.");
         }
 
         const lastUser = await User.findOne().sort("-id");
         const nextId = lastUser ? lastUser.id + 1 : 1;
 
         const formattedRole = role ? role.charAt(0).toUpperCase() + role.slice(1).toLowerCase() : "Viewer";
+        
+        // Hash the temporary password
+        const hashedPassword = bcrypt.hashSync(password, 10);
 
         const user = new User({
             id: nextId,
             name,
             email,
             role: formattedRole,
-            status: status || "active"
+            status: status || "active",
+            password: hashedPassword,
+            mustChangePassword: 'true'
         });
 
         await user.save();
-        respond(res, 201, true, "User created successfully.", user);
+        
+        // Return user without password
+        const userResponse = user.toObject();
+        delete userResponse.password;
+        
+        respond(res, 201, true, "User identity provisioned successfully.", userResponse);
     } catch (err) {
         if (err.code === 11000) {
-            return respond(res, 400, false, "User with this email already exists.");
+            return respond(res, 400, false, "Identity Conflict: Email already registered.");
         }
-        respond(res, 500, false, "Server Error: " + err.message);
+        respond(res, 500, false, "Provisioning Error: " + err.message);
     }
 };
 

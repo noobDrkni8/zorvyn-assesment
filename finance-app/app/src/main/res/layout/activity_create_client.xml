@@ -71,6 +71,21 @@
                     android:textColor="#FFF"/>
             </com.google.android.material.textfield.TextInputLayout>
 
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Temporary Password (One-Time)"
+                android:layout_marginTop="16dp"
+                app:boxStrokeColor="#03DAC5"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.Dense">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_create_client_password"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:textColor="#FFF"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
             <!-- Context Card -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"

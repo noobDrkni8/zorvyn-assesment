@@ -20,7 +20,7 @@ import retrofit2.Response;
 public class CreateAnalystActivity extends AppCompatActivity {
 
     private String currentUserId;
-    private EditText etName, etEmail;
+    private EditText etName, etEmail, etPassword;
     private FinanceApiService apiService;
 
     @Override
@@ -40,6 +40,7 @@ public class CreateAnalystActivity extends AppCompatActivity {
 
         etName = findViewById(R.id.et_create_analyst_name);
         etEmail = findViewById(R.id.et_create_analyst_email);
+        etPassword = findViewById(R.id.et_create_analyst_password);
 
         findViewById(R.id.btn_finalize_create_analyst).setOnClickListener(v -> submitNewAnalyst());
     }
@@ -47,21 +48,24 @@ public class CreateAnalystActivity extends AppCompatActivity {
     private void submitNewAnalyst() {
         String name = etName.getText().toString().trim();
         String email = etEmail.getText().toString().trim();
+        String password = etPassword.getText().toString().trim();
 
-        if (name.isEmpty() || email.isEmpty()) {
-            Toast.makeText(this, "All fields are required", Toast.LENGTH_SHORT).show();
+        if (name.isEmpty() || email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Internal protocol error: Missing required fields", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        User newUser = new User(name, email, "analyst");
+        User newUser = new User(name, email, "analyst", password);
         apiService.createUser(currentUserId, newUser).enqueue(new Callback<ApiResponse<User>>() {
             @Override
             public void onResponse(Call<ApiResponse<User>> call, Response<ApiResponse<User>> response) {
                 if (response.isSuccessful()) {
                     Toast.makeText(CreateAnalystActivity.this, "Analyst Successfully Provisioned", Toast.LENGTH_SHORT).show();
                     finish(); // Return to management list
+                } else if (response.code() == 403) {
+                    Toast.makeText(CreateAnalystActivity.this, "Access Denied: Admin authorization required", Toast.LENGTH_LONG).show();
                 } else {
-                    Toast.makeText(CreateAnalystActivity.this, "Provisioning failed", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(CreateAnalystActivity.this, "Provisioning failed: " + response.code(), Toast.LENGTH_SHORT).show();
                 }
             }
             @Override

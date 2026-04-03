@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 require("dotenv").config();
 const User = require("./src/models/User");
 const Record = require("./src/models/Record");
+const bcrypt = require("bcryptjs");
 
 const MONGO_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/finance_db";
 
@@ -15,28 +16,34 @@ const seedData = async () => {
         await Record.deleteMany({});
         console.log("Existing data cleared.");
 
-        // Create initial users
+        // Create initial users with secure passwords
         const users = [
             {
                 id: 1,
                 name: "Admin User",
                 email: "admin@zorvyn.com",
                 role: "Admin",
-                status: "active"
+                status: "active",
+                password: bcrypt.hashSync("nehal@admin", 10),
+                mustChangePassword: 'false'
             },
             {
                 id: 2,
                 name: "Analyst User",
                 email: "analyst@zorvyn.com",
                 role: "Analyst",
-                status: "active"
+                status: "active",
+                password: bcrypt.hashSync("password123", 10),
+                mustChangePassword: 'true'
             },
             {
                 id: 3,
                 name: "Viewer User",
                 email: "viewer@zorvyn.com",
                 role: "Viewer",
-                status: "active"
+                status: "active",
+                password: bcrypt.hashSync("password123", 10),
+                mustChangePassword: 'true'
             }
         ];
 

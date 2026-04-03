@@ -173,8 +173,23 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             } else if (id == R.id.nav_manage) {
                 if (role.equals("admin")) {
-                    startActivity(new Intent(this, AnalystAdminActivity.class)
-                            .putExtra("CURRENT_USER_ID", currentUserId));
+                    View anchor = findViewById(R.id.bottom_navigation).findViewById(R.id.nav_manage);
+                    androidx.appcompat.widget.PopupMenu popup = new androidx.appcompat.widget.PopupMenu(this, anchor);
+                    popup.getMenu().add("Manage Analysts");
+                    popup.getMenu().add("Manage Clients");
+                    
+                    popup.setOnMenuItemClickListener(menuItem -> {
+                        String title = menuItem.getTitle().toString();
+                        if ("Manage Analysts".equals(title)) {
+                            startActivity(new Intent(this, AnalystAdminActivity.class)
+                                    .putExtra("CURRENT_USER_ID", currentUserId));
+                        } else if ("Manage Clients".equals(title)) {
+                            startActivity(new Intent(this, ClientAdminActivity.class)
+                                    .putExtra("CURRENT_USER_ID", currentUserId));
+                        }
+                        return true;
+                    });
+                    popup.show();
                 }
                 return true;
             }

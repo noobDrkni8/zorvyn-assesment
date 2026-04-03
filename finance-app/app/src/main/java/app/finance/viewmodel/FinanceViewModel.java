@@ -45,4 +45,8 @@ public class FinanceViewModel extends ViewModel {
     public LiveData<ApiResponse<User>> searchUser(String userId, String name, String email) {
         return repository.searchUser(userId, name, email);
     }
+
+    public LiveData<ApiResponse<Void>> changePassword(String userId, String newPassword) {
+        return repository.changePassword(userId, newPassword);
+    }
 }

@@ -162,4 +162,27 @@ public class FinanceRepository {
         });
         return data;
     }
+
+    public LiveData<ApiResponse<Void>> changePassword(String userId, String newPassword) {
+        MutableLiveData<ApiResponse<Void>> data = new MutableLiveData<>();
+        java.util.Map<String, String> body = new java.util.HashMap<>();
+        body.put("newPassword", newPassword);
+        
+        apiService.changePassword(userId, body).enqueue(new Callback<ApiResponse<Void>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+                if (response.isSuccessful()) {
+                    data.setValue(response.body());
+                } else {
+                    data.setValue(new ApiResponse<>(false, "Security Update Failed: " + response.code(), null));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                data.setValue(new ApiResponse<>(false, "Network failure: " + t.getMessage(), null));
+            }
+        });
+        return data;
+    }
 }

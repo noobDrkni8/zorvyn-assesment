@@ -23,6 +23,7 @@ public class ClientAdminActivity extends AppCompatActivity {
     private LinearLayout layoutList;
     private ProgressBar progressBar;
     private FinanceViewModel viewModel;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,11 +46,21 @@ public class ClientAdminActivity extends AppCompatActivity {
         progressBar = findViewById(R.id.pb_client_admin);
 
         findViewById(R.id.btn_search_client).setOnClickListener(v -> performClientSearch());
-        findViewById(R.id.btn_nav_create_client).setOnClickListener(v -> {
+        
+        sessionManager = new SessionManager(this);
+        String role = sessionManager.getUserRole();
+        
+        View btnCreate = findViewById(R.id.btn_nav_create_client);
+        if ("analyst".equalsIgnoreCase(role)) {
+            btnCreate.setVisibility(View.GONE);
+        }
+        
+        btnCreate.setOnClickListener(v -> {
             Intent intent = new Intent(this, CreateClientActivity.class);
             intent.putExtra("CURRENT_USER_ID", currentUserId);
             startActivity(intent);
         });
+
     }
 
     @Override
@@ -126,7 +137,7 @@ public class ClientAdminActivity extends AppCompatActivity {
         card.setOnClickListener(v -> {
             Intent intent = new Intent(this, InspectionActivity.class);
             intent.putExtra("CURRENT_USER_ID", currentUserId);
-            intent.putExtra("CURRENT_USER_ROLE", "admin");
+            intent.putExtra("CURRENT_USER_ROLE", sessionManager.getUserRole());
             intent.putExtra("TARGET_USER_ID", String.valueOf(u.getId()));
             intent.putExtra("TARGET_USER_NAME", u.getName());
             intent.putExtra("TARGET_USER_EMAIL", u.getEmail());

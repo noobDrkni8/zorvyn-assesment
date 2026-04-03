@@ -16,7 +16,7 @@ import app.finance.viewmodel.FinanceViewModel;
 
 public class LoginActivity extends AppCompatActivity {
 
-    private EditText etEmail;
+    private EditText etEmail, etPassword;
     private Button btnLogin;
     private ProgressBar progressBar;
     private FinanceViewModel viewModel;
@@ -39,6 +39,7 @@ public class LoginActivity extends AppCompatActivity {
         viewModel = new ViewModelProvider(this).get(FinanceViewModel.class);
 
         etEmail = findViewById(R.id.et_login_email);
+        etPassword = findViewById(R.id.et_login_password);
         btnLogin = findViewById(R.id.btn_login);
         progressBar = findViewById(R.id.progressBar);
 
@@ -47,16 +48,18 @@ public class LoginActivity extends AppCompatActivity {
 
     private void performLogin() {
         String email = etEmail.getText().toString().trim();
-
-        if (email.isEmpty()) {
-            Toast.makeText(this, "Please enter your email identity", Toast.LENGTH_SHORT).show();
+        String password = etPassword.getText().toString().trim();
+ 
+        if (email.isEmpty() || password.isEmpty()) {
+            Toast.makeText(this, "Please enter both identity and password", Toast.LENGTH_SHORT).show();
             return;
         }
-
+ 
         btnLogin.setEnabled(false);
         progressBar.setVisibility(View.VISIBLE);
-
-        User loginRequest = new User("", email, "");
+ 
+        // User constructor with password for login request
+        User loginRequest = new User("", email, "", password);
 
         viewModel.login(loginRequest).observe(this, response -> {
             btnLogin.setEnabled(true);
@@ -68,7 +71,15 @@ public class LoginActivity extends AppCompatActivity {
                 // Initialize Persistent Session
                 sessionManager.createLoginSession(String.valueOf(user.getId()), user.getRole());
                 
-                navigateToDashboard(String.valueOf(user.getId()), user.getName(), user.getRole());
+                if ("true".equals(user.getMustChangePassword())) {
+                    // Mandatory OTP Reset Flow
+                    Intent intent = new Intent(LoginActivity.this, ChangePasswordActivity.class);
+                    intent.putExtra("USER_ID", String.valueOf(user.getId()));
+                    startActivity(intent);
+                    finish();
+                } else {
+                    navigateToDashboard(String.valueOf(user.getId()), user.getName(), user.getRole());
+                }
             } else {
                 String error = (response != null) ? response.getMessage() : "Authentication failed. Please check your network.";
                 Toast.makeText(LoginActivity.this, error, Toast.LENGTH_LONG).show();

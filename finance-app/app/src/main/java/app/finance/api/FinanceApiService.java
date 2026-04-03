@@ -20,6 +20,12 @@ public interface FinanceApiService {
     @POST("auth/login")
     Call<ApiResponse<User>> login(@Body User loginRequest);
 
+    @PUT("auth/change-password")
+    Call<ApiResponse<Void>> changePassword(
+            @Header("X-User-Id") String userId,
+            @Body java.util.Map<String, String> body
+    );
+
     @GET("records/summary")
     Call<ApiResponse<Summary>> getSummary(
             @Header("X-User-Id") String userId,

@@ -9,7 +9,10 @@ const userSchema = new mongoose.Schema({
         enum: ["Admin", "Analyst", "Viewer"],
         default: "Viewer"
     },
-    status: { type: String, default: "active" }
+    status: { type: String, default: "active" },
+    password: { type: String, required: true, select: false },
+    mustChangePassword: { type: String, default: 'true' } // String 'true'/'false' for easier Android parsing if needed, or Boolean. I'll use Boolean.
+
 }, {
     timestamps: true,
     toJSON: { virtuals: true },
