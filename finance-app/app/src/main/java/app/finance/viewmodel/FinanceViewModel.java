@@ -49,4 +49,8 @@ public class FinanceViewModel extends ViewModel {
     public LiveData<ApiResponse<Void>> changePassword(String userId, String newPassword) {
         return repository.changePassword(userId, newPassword);
     }
+
+    public LiveData<ApiResponse<Void>> deleteRecord(String userId, int recordId) {
+        return repository.deleteRecord(userId, recordId);
+    }
 }

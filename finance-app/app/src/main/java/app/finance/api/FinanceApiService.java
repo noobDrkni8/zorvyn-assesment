@@ -32,6 +32,12 @@ public interface FinanceApiService {
             @Query("targetUserId") String targetId
     );
 
+    @DELETE("records/{id}")
+    Call<ApiResponse<Void>> deleteRecord(
+            @Header("X-User-Id") String userId,
+            @Path("id") int id
+    );
+
     @GET("records")
     Call<ApiResponse<List<Record>>> getRecords(
             @Header("X-User-Id") String userId,

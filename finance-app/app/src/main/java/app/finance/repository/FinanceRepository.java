@@ -185,4 +185,24 @@ public class FinanceRepository {
         });
         return data;
     }
+
+    public LiveData<ApiResponse<Void>> deleteRecord(String userId, int recordId) {
+        MutableLiveData<ApiResponse<Void>> data = new MutableLiveData<>();
+        apiService.deleteRecord(userId, recordId).enqueue(new Callback<ApiResponse<Void>>() {
+            @Override
+            public void onResponse(Call<ApiResponse<Void>> call, Response<ApiResponse<Void>> response) {
+                if (response.isSuccessful()) {
+                    data.setValue(response.body());
+                } else {
+                    data.setValue(new ApiResponse<>(false, "Deletion failed: " + response.code(), null));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<ApiResponse<Void>> call, Throwable t) {
+                data.setValue(new ApiResponse<>(false, "Network error: " + t.getMessage(), null));
+            }
+        });
+        return data;
+    }
 }

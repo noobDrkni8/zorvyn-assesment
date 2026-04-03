@@ -70,13 +70,81 @@
                 android:visibility="gone"
                 android:layout_marginBottom="24dp" />
 
-            <!-- Target Balance Card -->
+            <!-- Financial Overview: Income & Expense Highlights -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginBottom="24dp">
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="20dp"
+                    app:cardBackgroundColor="#1E3A34"
+                    android:layout_marginEnd="8dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="INCOME"
+                            android:textColor="#03DAC5"
+                            android:textSize="9sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tv_inspect_total_income"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="$0.00"
+                            android:textColor="#FFFFFF"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <com.google.android.material.card.MaterialCardView
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="wrap_content"
+                    app:cardCornerRadius="20dp"
+                    app:cardBackgroundColor="#3D1C21"
+                    android:layout_marginStart="8dp">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="16dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="EXPENSES"
+                            android:textColor="#CF6679"
+                            android:textSize="9sp"
+                            android:textStyle="bold" />
+                        <TextView
+                            android:id="@+id/tv_inspect_total_expense"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="$0.00"
+                            android:textColor="#FFFFFF"
+                            android:textSize="20sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </LinearLayout>
+
+            <!-- Net Balance Highlight -->
             <com.google.android.material.card.MaterialCardView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 app:cardCornerRadius="28dp"
                 app:cardBackgroundColor="#BB86FC"
-                android:layout_marginBottom="20dp">
+                android:layout_marginBottom="32dp">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -85,11 +153,10 @@
                     <TextView
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
-                        android:text="TARGET BALANCE"
+                        android:text="NET REVENUE BALANCE"
                         android:textColor="#6200EE"
                         android:textSize="11sp"
-                        android:textStyle="bold"
-                        android:textAllCaps="true" />
+                        android:textStyle="bold" />
                     <TextView
                         android:id="@+id/tv_inspect_balance"
                         android:layout_width="wrap_content"
@@ -97,8 +164,7 @@
                         android:text="$0.00"
                         android:textColor="#000000"
                         android:textSize="36sp"
-                        android:textStyle="bold"
-                        android:layout_marginTop="4dp" />
+                        android:textStyle="bold" />
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -106,7 +172,7 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Category Wise Spending"
+                android:text="Portfolio Breakdown"
                 android:textColor="#FFFFFF"
                 android:textSize="16sp"
                 android:textStyle="bold"
@@ -116,7 +182,40 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                android:layout_marginBottom="24dp" />
+                android:layout_marginBottom="32dp" />
+
+            <!-- Historical Insights (Trends) -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Monthly Performance Insights"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
+            <LinearLayout
+                android:id="@+id/layout_inspect_trends"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="32dp" />
+
+            <!-- Recent Activity Feed -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Live Activity Feed"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginBottom="12dp" />
+            <LinearLayout
+                android:id="@+id/layout_inspect_activity_feed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="40dp" />
+
 
             <!-- Analyst Specific: Add Records to Target -->
             <LinearLayout
@@ -170,7 +269,8 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="52dp"
-                        android:text="Income"
+                        android:text="Add Income"
+                        android:textSize="12sp"
                         app:backgroundTint="#03DAC5"
                         android:textColor="#000"
                         app:cornerRadius="12dp"
@@ -180,13 +280,15 @@
                         android:layout_width="0dp"
                         android:layout_weight="1"
                         android:layout_height="52dp"
-                        android:text="Expense"
+                        android:text="Add Expense"
+                        android:textSize="12sp"
                         app:backgroundTint="#CF6679"
                         android:textColor="#000"
                         app:cornerRadius="12dp"
                         android:layout_marginStart="4dp"/>
                 </LinearLayout>
             </LinearLayout>
+
 
         </LinearLayout>
     </ScrollView>

@@ -22,12 +22,13 @@ public class InspectionActivity extends AppCompatActivity {
     private String currentUserId, currentUserRole, targetUserId;
     private String targetUserName, targetUserEmail, targetUserStatus, targetUserRole;
 
-    private TextView tvName, tvEmail, tvBalance;
-    private LinearLayout layoutCategoryList, panelAddRecord;
+    private TextView tvName, tvEmail, tvBalance, tvTotalIncome, tvTotalExpense;
+    private LinearLayout layoutCategoryList, layoutTrends, layoutActivityFeed, panelAddRecord;
     private com.google.android.material.button.MaterialButton btnToggleStatus, btnAddIncome, btnAddExpense;
     private EditText etAmount, etCategory;
 
     private FinanceViewModel viewModel;
+    private SessionManager sessionManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -35,6 +36,7 @@ public class InspectionActivity extends AppCompatActivity {
         setContentView(R.layout.activity_inspection);
 
         viewModel = new ViewModelProvider(this).get(FinanceViewModel.class);
+        sessionManager = new SessionManager(this);
 
         // Get Data from Intent
         currentUserId = getIntent().getStringExtra("CURRENT_USER_ID");
@@ -56,8 +58,14 @@ public class InspectionActivity extends AppCompatActivity {
         tvName = findViewById(R.id.tv_inspect_user_name);
         tvEmail = findViewById(R.id.tv_inspect_user_email);
         tvBalance = findViewById(R.id.tv_inspect_balance);
+        tvTotalIncome = findViewById(R.id.tv_inspect_total_income);
+        tvTotalExpense = findViewById(R.id.tv_inspect_total_expense);
+
         layoutCategoryList = findViewById(R.id.layout_inspect_category_list);
+        layoutTrends = findViewById(R.id.layout_inspect_trends);
+        layoutActivityFeed = findViewById(R.id.layout_inspect_activity_feed);
         panelAddRecord = findViewById(R.id.panel_inspect_add_record);
+
         btnToggleStatus = findViewById(R.id.btn_inspect_toggle_status);
         btnAddIncome = findViewById(R.id.btn_inspect_add_income);
         btnAddExpense = findViewById(R.id.btn_inspect_add_expense);
@@ -71,6 +79,7 @@ public class InspectionActivity extends AppCompatActivity {
         String roleLower = currentUserRole != null ? currentUserRole.toLowerCase() : "";
         if ("admin".equals(roleLower)) {
             btnToggleStatus.setVisibility(android.view.View.VISIBLE);
+            panelAddRecord.setVisibility(android.view.View.VISIBLE);
             updateStatusButtonUI();
         } else if ("analyst".equals(roleLower)) {
             panelAddRecord.setVisibility(android.view.View.VISIBLE);
@@ -95,18 +104,91 @@ public class InspectionActivity extends AppCompatActivity {
         viewModel.getSummary(currentUserId, targetUserId).observe(this, response -> {
             if (response != null && response.getData() != null) {
                 Summary s = response.getData();
-                tvBalance.setText(String.format(Locale.getDefault(), "$%.2f", s.getNetBalance()));
                 
+                // 1. Overview Totals
+                tvBalance.setText(String.format(Locale.getDefault(), "$%.2f", s.getNetBalance()));
+                tvTotalIncome.setText(String.format(Locale.getDefault(), "+$%.2f", s.getTotalIncome()));
+                tvTotalExpense.setText(String.format(Locale.getDefault(), "-$%.2f", s.getTotalExpense()));
+                
+                // 2. Category Breakdown
                 layoutCategoryList.removeAllViews();
                 if (s.getCategoryWise() != null) {
                     for (Summary.CategoryTotal item : s.getCategoryWise()) {
-                        TextView tv = new TextView(InspectionActivity.this);
+                        TextView tv = new TextView(this);
                         tv.setText(String.format(Locale.getDefault(), "• %s: $%.2f", item.getCategory(), item.getTotal()));
-                        tv.setTextColor(0xFFBB86FC);
-                        tv.setPadding(0, 0, 0, 16);
+                        tv.setTextColor((int) 0xFFBB86FC);
+                        tv.setTextSize(13);
+                        tv.setPadding(0, 4, 0, 8);
                         layoutCategoryList.addView(tv);
                     }
                 }
+
+                // 3. Historical Trends
+                layoutTrends.removeAllViews();
+                if (s.getMonthlyTrends() != null) {
+                    for (Summary.MonthlyTrend trend : s.getMonthlyTrends()) {
+                        TextView tv = new TextView(this);
+                        String colorStr = "income".equals(trend.getType()) ? "📈" : "📉";
+                        tv.setText(String.format(Locale.getDefault(), "%s %s: $%.2f (%s)", colorStr, trend.getMonth(), trend.getTotal(), trend.getType().toUpperCase()));
+                        tv.setTextColor((int) 0xFF88FFFFFFL);
+                        tv.setTextSize(12);
+                        tv.setPadding(0, 4, 0, 4);
+                        layoutTrends.addView(tv);
+                    }
+                }
+
+                // 4. Activity Feed (with Delete capability)
+                layoutActivityFeed.removeAllViews();
+                if (s.getRecentActivity() != null) {
+                    for (Record rec : s.getRecentActivity()) {
+                        displayActivityItem(rec);
+                    }
+                }
+
+            }
+        });
+    }
+
+    private void displayActivityItem(Record rec) {
+        View view = getLayoutInflater().inflate(android.R.layout.simple_list_item_2, layoutActivityFeed, false);
+        TextView tv1 = view.findViewById(android.R.id.text1);
+        TextView tv2 = view.findViewById(android.R.id.text2);
+
+        String symbol = "income".equals(rec.getType()) ? "+" : "-";
+        int color = "income".equals(rec.getType()) ? 0xFF03DAC5 : 0xFFCF6679;
+        
+        tv1.setText(String.format(Locale.getDefault(), "%s %s$%.2f - %s", rec.getDate(), symbol, rec.getAmount(), rec.getCategory()));
+        tv1.setTextColor(color);
+        tv1.setTextSize(14);
+
+        tv2.setText(rec.getNotes() != null ? rec.getNotes() : "No Description");
+        tv2.setTextColor((int) 0xFF88FFFFFFL);
+        
+        view.setPadding(0, 16, 0, 16);
+        
+        // Add Delete on Long Press
+        view.setOnLongClickListener(v -> {
+            new androidx.appcompat.app.AlertDialog.Builder(this)
+                .setTitle("Delete Audit Trail?")
+                .setMessage("Are you sure you want to remove this financial entry?")
+                .setPositiveButton("Delete", (dialog, which) -> deleteTargetRecord(rec.getId()))
+                .setNegativeButton("Cancel", null)
+                .show();
+            return true;
+        });
+
+        layoutActivityFeed.addView(view);
+    }
+
+    private void deleteTargetRecord(int recordId) {
+        // We reuse the viewModel.deleteRecord if it exists (Checking ViewModel now)
+        // Let's assume it exists or I'll add it.
+        // Actually I should check FinanceViewModel for deleteRecord.
+        // I will add it if missing.
+        viewModel.deleteRecord(currentUserId, recordId).observe(this, response -> {
+            if (response != null && response.isSuccess()) {
+                Toast.makeText(this, "Audit record purged.", Toast.LENGTH_SHORT).show();
+                fetchTargetSummary();
             }
         });
     }
