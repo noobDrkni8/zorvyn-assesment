@@ -107,6 +107,19 @@ public class MainActivity extends AppCompatActivity {
 
         btnLogout.setOnClickListener(v -> performLogout());
 
+        // Dashboard Status Card Navigation
+        cardNavAnalysts.setOnClickListener(v -> {
+            Intent intent = new Intent(this, AnalystAdminActivity.class);
+            intent.putExtra("CURRENT_USER_ID", currentUserId);
+            startActivity(intent);
+        });
+
+        cardNavClients.setOnClickListener(v -> {
+            Intent intent = new Intent(this, ClientAdminActivity.class);
+            intent.putExtra("CURRENT_USER_ID", currentUserId);
+            startActivity(intent);
+        });
+
         handleSession();
     }
 

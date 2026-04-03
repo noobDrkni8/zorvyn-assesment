@@ -93,13 +93,13 @@ exports.deleteUser = async (req, res) => {
 // Search User by Name or Email (Robust Version)
 exports.searchUser = async (req, res) => {
     try {
-        let { name } = req.query;
+        const { name, email } = req.query;
+        const searchTerm = (name || email || "").trim();
 
-        if (!name) {
+        if (!searchTerm) {
             return respond(res, 400, false, "Please provide a name or email identity to search.");
         }
 
-        const searchTerm = name.trim();
 
         // Use a case-insensitive fuzzy search that matches start or middle of strings
         const user = await User.findOne({
