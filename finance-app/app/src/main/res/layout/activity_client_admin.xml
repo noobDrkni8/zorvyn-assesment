@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#121212"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_client_admin"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#1E1E1E"
+        app:navigationIcon="@android:drawable/ic_menu_revert"
+        app:title="Client Management"
+        app:titleTextColor="#FFFFFF" />
+
+    <ProgressBar
+        android:id="@+id/pb_client_admin"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="-6dp"
+        android:indeterminate="true"
+        android:visibility="gone" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="20dp">
+
+        <!-- Tier 2: Specialized Search -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="24dp">
+            <EditText
+                android:id="@+id/et_search_client"
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_edittext"
+                android:hint="Search professional profile..."
+                android:paddingHorizontal="16dp"
+                android:textColor="#FFF"
+                android:textColorHint="#44FFFFFF" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_search_client"
+                android:layout_width="wrap_content"
+                android:layout_height="50dp"
+                android:layout_marginStart="12dp"
+                android:text="Find"
+                app:cornerRadius="10dp" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:layout_marginBottom="20dp">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Financial Viewers"
+                android:textColor="#BB86FC"
+                android:textStyle="bold"
+                android:textSize="13sp"
+                android:textAllCaps="true"/>
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_nav_create_client"
+                style="@style/Widget.MaterialComponents.Button.TextButton"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+ Add Client"
+                android:textColor="#BB86FC" />
+        </LinearLayout>
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:fillViewport="true">
+            <LinearLayout
+                android:id="@+id/layout_client_list_container"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical" />
+        </ScrollView>
+
+    </LinearLayout>
+</LinearLayout>

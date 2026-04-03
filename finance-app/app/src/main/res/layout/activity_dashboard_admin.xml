@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#121212"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_main"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#1E1E1E">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:paddingEnd="16dp">
+            <TextView
+                android:id="@+id/tv_dashboard_heading"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Command Center 3.0"
+                android:textColor="#FFFFFF"
+                android:textSize="18sp"
+                android:textStyle="bold" />
+            <LinearLayout
+                android:id="@+id/badge_system_health"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:background="@drawable/bg_edittext"
+                android:paddingHorizontal="12dp"
+                android:paddingVertical="4dp">
+                <View
+                    android:layout_width="8dp"
+                    android:layout_height="8dp"
+                    android:background="@android:color/holo_green_light"
+                    android:layout_marginEnd="6dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="System Online"
+                    android:textColor="#88FFFFFF"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:textAllCaps="true" />
+            </LinearLayout>
+        </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:gravity="center_horizontal">
+
+            <include layout="@layout/inc_global_liquidity" />
+            <include layout="@layout/inc_stat_stacks" />
+            <include layout="@layout/inc_quick_actions" />
+
+            <TextView
+                android:id="@+id/label_system_trends"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Monthly Performance Patterns"
+                android:textColor="#FFFFFF"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"/>
+            <LinearLayout
+                android:id="@+id/layout_system_trends"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_marginBottom="32dp"/>
+
+            <include layout="@layout/inc_audit_feed" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btn_refresh"
+                android:layout_width="match_parent"
+                android:layout_height="58dp"
+                android:text="Synchronize Center"
+                app:backgroundTint="#BB86FC"
+                android:textColor="#000"
+                app:cornerRadius="16dp"
+                android:layout_marginBottom="40dp" />
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

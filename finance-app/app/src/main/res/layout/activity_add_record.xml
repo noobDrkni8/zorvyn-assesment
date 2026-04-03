@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#121212"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar_add_record"
+        android:layout_width="match_parent"
+        android:layout_height="?attr/actionBarSize"
+        android:background="#1E1E1E"
+        app:title="New Financial Entry"
+        app:titleTextColor="#FFFFFF"
+        app:navigationIcon="@android:drawable/ic_menu_revert" />
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="24dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TARGET USER"
+                android:textColor="#BB86FC"
+                android:textSize="11sp"
+                android:fontFamily="sans-serif-black"
+                android:textAllCaps="true"
+                android:layout_marginBottom="12dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/til_user_search"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Search Client by Name or ID"
+                app:startIconDrawable="@android:drawable/ic_menu_search"
+                app:boxStrokeColor="#BB86FC"
+                app:endIconMode="clear_text"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                <AutoCompleteTextView
+                    android:id="@+id/actv_user_search"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFF"
+                    android:completionThreshold="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/tv_selected_user_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="No client selected (Defaulting to self)"
+                android:textColor="#88FFFFFF"
+                android:textSize="12sp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="24dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="RECORD DETAILS"
+                android:textColor="#BB86FC"
+                android:textSize="11sp"
+                android:fontFamily="sans-serif-black"
+                android:textAllCaps="true"
+                android:layout_marginBottom="12dp" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Amount ($)"
+                app:boxStrokeColor="#BB86FC"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_amount"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFF"
+                    android:inputType="numberDecimal"
+                    android:textSize="24sp"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Category"
+                android:layout_marginTop="20dp"
+                app:boxStrokeColor="#BB86FC"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_category"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFF"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Notes (Optional)"
+                android:layout_marginTop="20dp"
+                app:boxStrokeColor="#BB86FC"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/et_notes"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FFF"/>
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:layout_marginTop="40dp">
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_save_income"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="60dp"
+                    android:text="Log Income"
+                    app:backgroundTint="#03DAC5"
+                    android:textColor="#000"
+                    app:cornerRadius="16dp"
+                    android:layout_marginEnd="8dp"/>
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btn_save_expense"
+                    android:layout_width="0dp"
+                    android:layout_weight="1"
+                    android:layout_height="60dp"
+                    android:text="Log Expense"
+                    app:backgroundTint="#CF6679"
+                    android:textColor="#000"
+                    app:cornerRadius="16dp"
+                    android:layout_marginStart="8dp"/>
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

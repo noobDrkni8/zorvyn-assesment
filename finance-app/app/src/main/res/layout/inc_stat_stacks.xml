@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/panel_manage_users"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:layout_marginBottom="32dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center"
+        android:baselineAligned="false">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_nav_analysts"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="24dp"
+            app:cardBackgroundColor="#1E1E1E"
+            android:layout_marginEnd="8dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:padding="20dp">
+                <FrameLayout
+                    android:layout_width="74dp"
+                    android:layout_height="74dp">
+                    <com.google.android.material.progressindicator.CircularProgressIndicator
+                        android:id="@+id/chart_analysts"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:progress="0"
+                        app:indicatorSize="74dp"
+                        app:trackThickness="10dp"
+                        app:indicatorColor="#BB86FC"
+                        app:trackColor="#1AFFFFFF"
+                        app:trackCornerRadius="5dp" />
+                    <TextView
+                        android:id="@+id/tv_count_analysts_active"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="0"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </FrameLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="ANALYSTS"
+                    android:textColor="#BB86FC"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="16dp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/card_nav_clients"
+            android:layout_width="0dp"
+            android:layout_weight="1"
+            android:layout_height="wrap_content"
+            app:cardCornerRadius="24dp"
+            app:cardBackgroundColor="#1E1E1E"
+            android:layout_marginStart="8dp">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:gravity="center_horizontal"
+                android:padding="20dp">
+                <FrameLayout
+                    android:layout_width="74dp"
+                    android:layout_height="74dp">
+                    <com.google.android.material.progressindicator.CircularProgressIndicator
+                        android:id="@+id/chart_clients"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:progress="0"
+                        app:indicatorSize="74dp"
+                        app:trackThickness="10dp"
+                        app:indicatorColor="#03DAC5"
+                        app:trackColor="#1AFFFFFF"
+                        app:trackCornerRadius="5dp" />
+                    <TextView
+                        android:id="@+id/tv_count_clients_active"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:text="0"
+                        android:textColor="#FFFFFF"
+                        android:textSize="18sp"
+                        android:textStyle="bold" />
+                </FrameLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="CLIENTS"
+                    android:textColor="#03DAC5"
+                    android:textSize="10sp"
+                    android:textStyle="bold"
+                    android:layout_marginTop="16dp" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</LinearLayout>
