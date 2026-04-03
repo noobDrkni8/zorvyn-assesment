@@ -16,7 +16,12 @@ app.use(cors());
 app.use(express.json());
 
 app.use((req, res, next) => {
-    console.log(`Incoming ${req.method} to ${req.url}`);
+    const userId = req.headers["x-user-id"];
+    console.log(`[${new Date().toISOString()}] ${req.method} ${req.originalUrl} | X-User-Id: ${userId || 'MISSING'}`);
+    
+    res.on('finish', () => {
+        console.log(`[${new Date().toISOString()}] Response: ${res.statusCode}`);
+    });
     next();
 });
 
