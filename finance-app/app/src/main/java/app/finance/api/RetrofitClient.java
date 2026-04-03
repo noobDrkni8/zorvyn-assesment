@@ -15,7 +15,7 @@ public class RetrofitClient {
 
     private static final String TAG = "RetrofitClient";
     private static final String PROD_URL = "https://zorvyn-assesment.onrender.com/api/";
-    private static final String LOCAL_URL = "http://10.0.2.2:3000/api/"; 
+    private static final String LOCAL_URL = "http://192.168.29.2:3000/api/"; 
     
     private static Retrofit retrofit = null;
     private static final AtomicBoolean isLocal = new AtomicBoolean(false);
@@ -48,7 +48,8 @@ public class RetrofitClient {
     private static void checkServerAvailability() {
         Thread thread = new Thread(() -> {
             try (Socket socket = new Socket()) {
-                socket.connect(new InetSocketAddress("10.0.2.2", 3000), 400);
+                // Use the PC's actual IP so the physical phone can reach it
+                socket.connect(new InetSocketAddress("192.168.29.2", 3000), 1000);
                 isLocal.set(true);
             } catch (IOException e) {
                 isLocal.set(false);
@@ -56,7 +57,7 @@ public class RetrofitClient {
         });
         thread.start();
         try {
-            thread.join(500);
+            thread.join(1200);
         } catch (InterruptedException ignored) {}
     }
 }
